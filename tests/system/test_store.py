@@ -11,7 +11,7 @@ class StoreTest(BaseTest):
 
                 self.assertEqual(response.status_code, 201)
                 self.assertIsNotNone(StoreModel.find_by_name('teststore'))
-                self.assertDictEqual({'name': 'teststore', 'items': []},
+                self.assertDictEqual({'id': 1, 'name': 'teststore', 'items': []},
                                      json.loads(response.data))
 
     def test_create_duplicate_store(self):
@@ -45,6 +45,7 @@ class StoreTest(BaseTest):
                 response = client.get('/store/teststore')
                 self.assertEqual(response.status_code, 200)
                 expected = {
+                    'id': 1,
                     'name': 'teststore',
                     'items': []
                 }
@@ -63,7 +64,8 @@ class StoreTest(BaseTest):
                 client.post('/store/teststore')
                 client.post('/item/testitem', data={'price': 19.99, 'store_id': 1}) # or ItemModel('testitem', 19.99, 1).save_to_db()
                 response = client.get('/store/teststore')
-                expected = {'name': 'teststore',
+                expected = {'id': 1,
+                            'name': 'teststore',
                             'items': [{'name': 'testitem', 'price': 19.99}]
                             }
                 self.assertDictEqual(json.loads(response.data), expected)
@@ -77,8 +79,8 @@ class StoreTest(BaseTest):
 
                 storelist=client.get('/stores')
                 expected = {'stores': [
-                    {'name': 'teststore_one', 'items': []},
-                    {'name': 'teststore_two', 'items': []}
+                    {'id': 1, 'name': 'teststore_one', 'items': []},
+                    {'id': 2, 'name': 'teststore_two', 'items': []}
                 ]
                 }
                 self.assertDictEqual(json.loads(storelist.data), expected)
@@ -93,8 +95,8 @@ class StoreTest(BaseTest):
 
                 storelist = client.get('/stores')
                 expected = {'stores': [
-                    {'name': 'teststore_one', 'items': [{'name': 'itemforone', 'price': 19.99}]},
-                    {'name': 'teststore_two', 'items': [{'name': 'itemfortwo', 'price': 29.99}]}
+                    {'id': 1, 'name': 'teststore_one', 'items': [{'name': 'itemforone', 'price': 19.99}]},
+                    {'id': 2, 'name': 'teststore_two', 'items': [{'name': 'itemfortwo', 'price': 29.99}]}
                 ]
                 }
                 self.assertDictEqual(json.loads(storelist.data), expected)
